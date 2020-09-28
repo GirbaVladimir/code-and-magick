@@ -31,17 +31,13 @@
     return maxElement;
   };
 
+  // eslint-disable-next-line consistent-return
   const getUserIndex = function (arr) {
-    let user;
-
     for (let i = 0; i < arr.length; i++) {
       if (arr[i] === USER_NAME) {
-        user = i;
-        break;
+        return i;
       }
     }
-
-    return user;
   };
 
   const renderBar = function (ctx, times, players, barColor, maxTime, i, x) {
