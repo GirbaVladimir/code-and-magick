@@ -7,19 +7,97 @@
     `rgb(56, 159, 117)`, `rgb(215, 210, 55)`, `rgb(0, 0, 0)`];
   const WIZARD_EYESCOLOR = [`black`, `red`, `blue`, `yellow`, `green`];
   const WIZARD_SIZE = 4;
+  const MIN_NAME_LENGTH = 2;
+  const MAX_NAME_LENGTH = 25;
+  const FIREBALL_COLOR = [`#ee4830`, `#30a8ee`, `#5ce6c0`, `#e848d5`, `#e6e848`];
 
-  const showUserDialog = function () {
-    const userDialog = document.querySelector(`.setup`);
-    userDialog.classList.remove(`hidden`);
-    return userDialog;
+  const userNameInput = document.querySelector(`.setup-user-name`);
+
+  userNameInput.addEventListener(`input`, function () {
+    const valueLength = userNameInput.value.length;
+
+    if (valueLength < MIN_NAME_LENGTH) {
+      userNameInput.setCustomValidity(`Ещё ` + (MIN_NAME_LENGTH - valueLength) + ` симв.`);
+    } else if (valueLength > MAX_NAME_LENGTH) {
+      userNameInput.setCustomValidity(`Удалите лишние ` + (valueLength - MAX_NAME_LENGTH) + ` симв.`);
+    } else {
+      userNameInput.setCustomValidity(``);
+    }
+  });
+
+  const setupOpen = document.querySelector(`.setup-open`);
+  const setup = document.querySelector(`.setup`);
+  const setupClose = document.querySelector(`.setup-close`);
+
+  const onPopupEscPress = function (evt) {
+    if (evt.key === `Escape` && document.activeElement.name !== `username`) {
+      evt.preventDefault();
+      closePopup();
+    }
+  };
+
+  const openPopup = function () {
+    setup.classList.remove(`hidden`);
+    document.addEventListener(`keydown`, onPopupEscPress);
+  };
+
+  const closePopup = function () {
+    setup.classList.add(`hidden`);
+    document.removeEventListener(`keydown`, onPopupEscPress);
+  };
+
+  setupOpen.addEventListener(`click`, function () {
+    openPopup();
+  });
+
+  setupOpen.addEventListener(`keydown`, function (evt) {
+    if (evt.key === `Enter`) {
+      openPopup();
+    }
+  });
+
+  setupClose.addEventListener(`click`, function () {
+    closePopup();
+  });
+
+  setupClose.addEventListener(`keydown`, function (evt) {
+    if (evt.key === `Enter`) {
+      closePopup();
+    }
+  });
+
+  const coat = document.querySelector(`.wizard-coat`);
+  const eyes = document.querySelector(`.wizard-eyes`);
+  const fireball = document.querySelector(`.setup-fireball-wrap`);
+
+  const changeColorOnClick = function (arr, inputName, selector, isFireball = false) {
+    selector.addEventListener(`click`, function () {
+      const randomColor = getRandomArrElement(arr).toString();
+      if (!isFireball) {
+        selector.style.fill = randomColor;
+      } else {
+        selector.style.background = randomColor;
+      }
+      document.querySelector(`input[name=${inputName}]`).value = randomColor;
+    });
+  };
+
+  changeColorOnClick(WIZARD_COATCOLOR, `coat-color`, coat);
+  changeColorOnClick(WIZARD_EYESCOLOR, `eyes-color`, eyes);
+  changeColorOnClick(FIREBALL_COLOR, `fireball-color`, fireball, true);
+
+  const randomInteger = function (min, max) {
+    const rand = min + Math.random() * (max + 1 - min);
+    return Math.floor(rand);
   };
 
   const getRandomArrElement = function (arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
+    return arr[randomInteger(0, arr.length - 1)];
   };
 
   const getRandomWizardName = function (reverse = false) {
-    return reverse ? getRandomArrElement(WIZARD_SURNAMES) + ` ` + getRandomArrElement(WIZARD_NAMES) :
+    return reverse ?
+      getRandomArrElement(WIZARD_SURNAMES) + ` ` + getRandomArrElement(WIZARD_NAMES) :
       getRandomArrElement(WIZARD_NAMES) + ` ` + getRandomArrElement(WIZARD_SURNAMES);
   };
 
@@ -52,17 +130,16 @@
   };
 
   const showSimilarWizards = function () {
-    const userDialog = showUserDialog();
-    const similarListElement = userDialog.querySelector(`.setup-similar-list`);
+    const similarListElement = setup.querySelector(`.setup-similar-list`);
     const wizards = createWizards();
 
-    let fragment = document.createDocumentFragment();
+    const fragment = document.createDocumentFragment();
     for (let i = 0; i < wizards.length; i++) {
       fragment.appendChild(renderWizard(wizards[i]));
     }
     similarListElement.appendChild(fragment);
 
-    userDialog.querySelector(`.setup-similar`).classList.remove(`hidden`);
+    setup.querySelector(`.setup-similar`).classList.remove(`hidden`);
   };
 
   showSimilarWizards();
