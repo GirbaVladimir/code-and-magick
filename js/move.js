@@ -1,4 +1,5 @@
 'use strict';
+
 (function () {
   const setupDialogElement = document.querySelector(`.setup`);
   const dialogHandle = setupDialogElement.querySelector(`.upload`);
