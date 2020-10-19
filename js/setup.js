@@ -37,6 +37,7 @@
     `green`
   ];
   const WIZARD_SIZE = 4;
+  const FAKE_WIZARD_SIZE = 10;
   const FIREBALL_COLOR = [`#ee4830`, `#30a8ee`, `#5ce6c0`, `#e848d5`, `#e6e848`];
 
   const setup = document.querySelector(`.setup`);
@@ -63,14 +64,16 @@
       window.getRandomArrElement(WIZARD_NAMES) + ` ` + window.getRandomArrElement(WIZARD_SURNAMES);
   };
 
-  const createWizards = function () {
+  // Нужна ли эта функция вообще?
+  // eslint-disable-next-line no-unused-vars
+  const createFakeWizards = function () {
     let wizards = [];
 
-    for (let i = 0; i < WIZARD_SIZE; i++) {
+    for (let i = 0; i < FAKE_WIZARD_SIZE; i++) {
       wizards.push({
         name: getRandomWizardName(Math.floor(Math.random() * 1.99)),
-        coatColor: window.getRandomArrElement(WIZARD_COATCOLOR),
-        eyesColor: window.getRandomArrElement(WIZARD_EYESCOLOR)
+        colorCoat: window.getRandomArrElement(WIZARD_COATCOLOR),
+        colorEyes: window.getRandomArrElement(WIZARD_EYESCOLOR)
       });
     }
 
@@ -85,24 +88,35 @@
     let wizardElement = similarWizardTemplate.cloneNode(true);
 
     wizardElement.querySelector(`.setup-similar-label`).textContent = wizard.name;
-    wizardElement.querySelector(`.wizard-coat`).style.fill = wizard.coatColor;
-    wizardElement.querySelector(`.wizard-eyes`).style.fill = wizard.eyesColor;
+    wizardElement.querySelector(`.wizard-coat`).style.fill = wizard.colorCoat;
+    wizardElement.querySelector(`.wizard-eyes`).style.fill = wizard.colorEyes;
 
     return wizardElement;
   };
 
-  const showSimilarWizards = function () {
+  const showSimilarWizards = function (wizards) {
     const similarListElement = setup.querySelector(`.setup-similar-list`);
-    const wizards = createWizards();
 
     const fragment = document.createDocumentFragment();
-    for (let i = 0; i < wizards.length; i++) {
-      fragment.appendChild(renderWizard(wizards[i]));
+    for (let i = 0; i < WIZARD_SIZE; i++) {
+      fragment.appendChild(renderWizard(wizards[getRandomInteger(0, wizards.length - 1)]));
     }
     similarListElement.appendChild(fragment);
 
     setup.querySelector(`.setup-similar`).classList.remove(`hidden`);
   };
 
-  showSimilarWizards();
+  window.errorHandler = function (errorMessage) {
+    const node = document.createElement(`div`);
+    node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
+    node.style.position = `absolute`;
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = `30px`;
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement(`afterbegin`, node);
+  };
+
+  window.backend.load(showSimilarWizards, window.errorHandler);
 })();
