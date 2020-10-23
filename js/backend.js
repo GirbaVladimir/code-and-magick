@@ -1,26 +1,25 @@
 'use strict';
 
 (function () {
+  const SAVE_URL = `https://21.javascript.pages.academy/code-and-magick`;
+  const LOAD_URL = `https://21.javascript.pages.academy/code-and-magick/data`;
+  const TIMEOUT_IN_MS = 10000;
   window.backend = {
-    SAVE_URL: `https://21.javascript.pages.academy/code-and-magick`,
-    LOAD_URL: `https://21.javascript.pages.academy/code-and-magick/data`,
-    TIMEOUT_IN_MS: 10000,
-
-    save(data, onLoad, onError) {
+    save(data, onSave, onError) {
       const xhr = new XMLHttpRequest();
       xhr.responseType = `json`;
 
       xhr.addEventListener(`load`, function () {
         switch (xhr.status) {
           case 200:
-            onLoad();
+            onSave();
             break;
           default:
             onError(`Статус ответа: : ${xhr.status} ${xhr.statusText}`);
         }
       });
 
-      xhr.open(`POST`, this.SAVE_URL);
+      xhr.open(`POST`, SAVE_URL);
       xhr.send(data);
     },
 
@@ -52,8 +51,8 @@
         onError(`Ошибка соединения. Превышено время ожидания`);
       });
 
-      xhr.timeout = this.TIMEOUT_IN_MS;
-      xhr.open(`GET`, this.LOAD_URL);
+      xhr.timeout = TIMEOUT_IN_MS;
+      xhr.open(`GET`, LOAD_URL);
       xhr.send();
     }
   };
