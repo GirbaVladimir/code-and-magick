@@ -1,124 +1,122 @@
 'use strict';
 
-(function () {
-  const CLOUD_WIDTH = 420;
-  const CLOUD_HEIGHT = 270;
-  const CLOUD_X = 100;
-  const CLOUD_Y = 10;
-  const GAP = 10;
-  const FONT_GAP = 80;
-  const TEXT_HEIGHT = 10;
-  const HIST_HEIGHT = 150;
-  const BAR_WIDTH = 40;
-  const BAR_GAP = 50;
-  const barHeight = HIST_HEIGHT - TEXT_HEIGHT;
-  const USER_NAME = `Вы`;
+const CLOUD_WIDTH = 420;
+const CLOUD_HEIGHT = 270;
+const CLOUD_X = 100;
+const CLOUD_Y = 10;
+const GAP = 10;
+const FONT_GAP = 80;
+const TEXT_HEIGHT = 10;
+const HIST_HEIGHT = 150;
+const BAR_WIDTH = 40;
+const BAR_GAP = 50;
+const barHeight = HIST_HEIGHT - TEXT_HEIGHT;
+const USER_NAME = `Вы`;
 
-  const renderCloud = function (ctx, x, y, color) {
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, CLOUD_WIDTH, CLOUD_HEIGHT);
-  };
+const renderCloud = function (ctx, x, y, color) {
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, CLOUD_WIDTH, CLOUD_HEIGHT);
+};
 
-  const getMaxElement = function (arr) {
-    let maxElement = arr[0];
+const getMaxElement = function (arr) {
+  let maxElement = arr[0];
 
-    for (let i = 1; i < arr.length; i++) {
-      if (arr[i] > maxElement) {
-        maxElement = arr[i];
-      }
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] > maxElement) {
+      maxElement = arr[i];
     }
+  }
 
-    return maxElement;
-  };
+  return maxElement;
+};
 
-  const getUserIndex = function (arr) {
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i] === USER_NAME) {
-        return i;
-      }
+const getUserIndex = function (arr) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === USER_NAME) {
+      return i;
     }
+  }
 
-    return `User not found`;
-  };
+  return `User not found`;
+};
 
-  const renderBar = function (ctx, times, players, barColor, maxTime, i, x) {
-    ctx.fillStyle = `#000`;
-    ctx.fillText(
-        Math.round(times[i]).toString(),
-        x,
-        CLOUD_Y + FONT_GAP + (barHeight - ((barHeight * times[i]) / maxTime))
-    );
+const renderBar = function (ctx, times, players, barColor, maxTime, i, x) {
+  ctx.fillStyle = `#000`;
+  ctx.fillText(
+      Math.round(times[i]).toString(),
+      x,
+      CLOUD_Y + FONT_GAP + (barHeight - ((barHeight * times[i]) / maxTime))
+  );
 
-    ctx.fillStyle = barColor;
-    ctx.fillRect(
-        x,
-        CLOUD_Y + FONT_GAP + GAP + (barHeight - ((barHeight * times[i]) / maxTime)),
-        BAR_WIDTH,
-        (barHeight * times[i]) / maxTime
-    );
+  ctx.fillStyle = barColor;
+  ctx.fillRect(
+      x,
+      CLOUD_Y + FONT_GAP + GAP + (barHeight - ((barHeight * times[i]) / maxTime)),
+      BAR_WIDTH,
+      (barHeight * times[i]) / maxTime
+  );
 
-    ctx.fillStyle = `#000`;
-    ctx.fillText(
-        players[i],
-        x,
-        CLOUD_Y + barHeight + FONT_GAP + GAP * 3
-    );
-  };
+  ctx.fillStyle = `#000`;
+  ctx.fillText(
+      players[i],
+      x,
+      CLOUD_Y + barHeight + FONT_GAP + GAP * 3
+  );
+};
 
-  window.renderStatistics = function (ctx, players, times) {
-    renderCloud(
-        ctx,
-        CLOUD_X + GAP,
-        CLOUD_Y + GAP,
-        `rgba(0, 0, 0, 0.7)`
-    );
-    renderCloud(
-        ctx,
-        CLOUD_X,
-        CLOUD_Y,
-        `#fff`
-    );
+window.renderStatistics = function (ctx, players, times) {
+  renderCloud(
+      ctx,
+      CLOUD_X + GAP,
+      CLOUD_Y + GAP,
+      `rgba(0, 0, 0, 0.7)`
+  );
+  renderCloud(
+      ctx,
+      CLOUD_X,
+      CLOUD_Y,
+      `#fff`
+  );
 
-    ctx.fillStyle = `#000`;
-    ctx.font = `16px PT Mono`;
+  ctx.fillStyle = `#000`;
+  ctx.font = `16px PT Mono`;
 
-    ctx.fillText(
-        `Ура вы победили!`,
-        CLOUD_X + GAP * 2,
-        CLOUD_Y + GAP * 3
-    );
+  ctx.fillText(
+      `Ура вы победили!`,
+      CLOUD_X + GAP * 2,
+      CLOUD_Y + GAP * 3
+  );
 
-    ctx.fillText(
-        `Список результатов:`,
-        CLOUD_X + GAP * 2,
-        CLOUD_Y + GAP * 5
-    );
+  ctx.fillText(
+      `Список результатов:`,
+      CLOUD_X + GAP * 2,
+      CLOUD_Y + GAP * 5
+  );
 
-    const maxTime = getMaxElement(times);
-    const userIndex = getUserIndex(players);
+  const maxTime = getMaxElement(times);
+  const userIndex = getUserIndex(players);
 
-    renderBar(
-        ctx,
+  renderBar(
+      ctx,
+      times,
+      players,
+      `#ff0000`,
+      maxTime,
+      userIndex,
+      CLOUD_X + BAR_GAP - GAP
+  );
+
+  times.splice(userIndex, 1);
+  players.splice(userIndex, 1);
+
+  for (let i = 0; i < players.length; i++) {
+    renderBar(ctx,
         times,
         players,
-        `#ff0000`,
+        `hsl(240, 100%,` + Math.random() * 100 + `%)`,
         maxTime,
-        userIndex,
-        CLOUD_X + BAR_GAP - GAP
+        i,
+        CLOUD_X + BAR_GAP + (BAR_GAP + BAR_WIDTH) * (i + 1) - GAP
     );
-
-    times.splice(userIndex, 1);
-    players.splice(userIndex, 1);
-
-    for (let i = 0; i < players.length; i++) {
-      renderBar(ctx,
-          times,
-          players,
-          `hsl(240, 100%,` + Math.random() * 100 + `%)`,
-          maxTime,
-          i,
-          CLOUD_X + BAR_GAP + (BAR_GAP + BAR_WIDTH) * (i + 1) - GAP
-      );
-    }
-  };
-})();
+  }
+};
