@@ -10,6 +10,7 @@ module.exports = {
     `./js/render.js`,
     `./js/setup.js`,
     `./js/move.js`,
+    `./js/avatar.js`,
     `./js/form.js`,
     `./js/dialog.js`,
     `./js/stat.js`
@@ -18,7 +19,6 @@ module.exports = {
     filename: `bundle.js`,
     path: path.resolve(__dirname),
     iife: true
-
   },
   devtool: false
 }
